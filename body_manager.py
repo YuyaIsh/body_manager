@@ -1,9 +1,9 @@
-import os
 from datetime import datetime, timedelta
 import PySimpleGUI as sg
 import psycopg2
 import locale
-from dotenv import load_dotenv
+
+import env_supabase.supabase_env as supabase
 
 locale.setlocale(locale.LC_ALL, 'ja_JP.UTF-8')
 
@@ -268,13 +268,11 @@ def confirm_update_popup(confirmation_date):
 
 ##################################### 体重テーブル d########################################dd
 def conn_db():
-    load_dotenv()
-
-    ip = os.environ.get("IP")
-    port = os.environ.get("PORT")
-    dbname = os.environ.get("DB")
-    user = os.environ.get("USER")
-    pw = os.environ.get("PW")
+    ip = supabase.IP
+    port = supabase.PORT
+    dbname = supabase.DB
+    user = supabase.USER
+    pw = supabase.PW
 
     return f"host={ip} port={port} dbname={dbname} user={user} password={pw}"
 

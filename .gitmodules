@@ -1,0 +1,3 @@
+[submodule "env_supabase"]
+	path = env_supabase
+	url = https://github.com/YuyaIsh/env_supabase.git
