@@ -193,7 +193,7 @@ def main():
             date = date.strftime(date_format)
             window["date_weight"].update(date)
 
-            data_weight,_ = get_weight()
+            data_weight = get_weight()
             window["table_weight"].update(data_weight)
 
 #############################w BIG3記録を入力する処理 ######################################
@@ -220,7 +220,7 @@ def main():
                     sg.PopupOK("サーバーに接続できません。",location=popup_location)
                     continue
 
-            data_big3,_ = get_big3()
+            data_big3 = get_big3()
             window["table_big3"].update(data_big3)
             big3_total = data_big3[0][1]+data_big3[1][1]+data_big3[2][1]
             window["big3_total"].update(data_big3)
@@ -240,19 +240,19 @@ def main():
                 sg.PopupOK("サーバーに接続できません。",location=popup_location)
                 continue
 
-            data_armsize,_ = get_armsize()
+            data_armsize = get_armsize()
             window["table_armsize"].update(data_armsize)
 
 #############################w テーブル更新 ######################################
         if "update_table_" in event:
             if "_weight" in event:
-                data_weight,_ = get_weight()
+                data_weight = get_weight()
                 window["table_weight"].update(data_weight)
             if "_big3" in event:
-                data_big3,_ = get_big3()
+                data_big3 = get_big3()
                 window["table_big3"].update(data_big3)
             if "_armsize" in event:
-                data_armsize,_ = get_armsize()
+                data_armsize = get_armsize()
                 window["table_armsize"].update(data_armsize)
 
 
