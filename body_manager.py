@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import PySimpleGUI as sg
-import psycopg2
+import psycopg
 import locale
 
 import env_supabase.supabase_env as supabase
@@ -178,12 +178,12 @@ def main():
 
             try:
                 insert_weight(date,weight)
-            except psycopg2.errors.UniqueViolation:
+            except psycopg.errors.UniqueViolation:
                 comfirm = confirm_update_popup(values["date_weight"])
                 if comfirm == "OK":
                     update_weight(date,weight)
 
-            except psycopg2.OperationalError:
+            except psycopg.OperationalError:
                 sg.PopupOK("サーバーに接続できません。",location=popup_location)
                 continue
 
@@ -212,11 +212,11 @@ def main():
             if values[event[event.find("_")+1:]]:
                 try:
                     insert_big3(values["date_big3"],event_name,values[event[event.find("_")+1:]])
-                except psycopg2.errors.UniqueViolation:
+                except psycopg.errors.UniqueViolation:
                     comfirm = confirm_update_popup(values["date_big3"])
                     if comfirm == "OK":
                         update_big3(values["date_big3"],event_name,values[event[event.find("_")+1:]])
-                except psycopg2.OperationalError:
+                except psycopg.OperationalError:
                     sg.PopupOK("サーバーに接続できません。",location=popup_location)
                     continue
 
@@ -232,11 +232,11 @@ def main():
         if "input_armsize" in event:
             try:
                 insert_armsize(values["date_armsize"],values["left_armsize"],values["right_armsize"])
-            except psycopg2.errors.UniqueViolation:
+            except psycopg.errors.UniqueViolation:
                 comfirm = confirm_update_popup(values["date_armsize"])
                 if comfirm == "OK":
                     update_armsize(values["date_armsize"],values["left_armsize"],values["right_armsize"])
-            except psycopg2.OperationalError:
+            except psycopg.OperationalError:
                 sg.PopupOK("サーバーに接続できません。",location=popup_location)
                 continue
 
@@ -282,7 +282,7 @@ def get_weight():
         FROM weekly_weight_moving_avg
         ORDER BY date DESC
     """
-    with psycopg2.connect(conn_db()) as conn:
+    with psycopg.connect(conn_db()) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
             data = cur.fetchall()
@@ -298,7 +298,7 @@ def insert_weight(date,weight):
         INSERT INTO weight_log (date,yuya_weight)
         VALUES (\'{date}\',{weight})
         """
-    with psycopg2.connect(conn_db()) as conn:
+    with psycopg.connect(conn_db()) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
         conn.commit()
@@ -309,7 +309,7 @@ def update_weight(date,weight):
         SET yuya_weight = {weight}
         WHERE date = \'{date}\'
         """
-    with psycopg2.connect(conn_db()) as conn:
+    with psycopg.connect(conn_db()) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
         conn.commit()
@@ -323,7 +323,7 @@ def get_big3():
             to_char(date_updated,'YYYY/MM/DD')
         FROM big3_max
     """
-    with psycopg2.connect(conn_db()) as conn:
+    with psycopg.connect(conn_db()) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
             data = cur.fetchall()
@@ -339,7 +339,7 @@ def insert_big3(date,event_name,record):
         INSERT INTO big3_record (date_updated,event_name,record)
         VALUES (\'{date}\',\'{event_name}\',{record})
     """
-    with psycopg2.connect(conn_db()) as conn:
+    with psycopg.connect(conn_db()) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
         conn.commit()
@@ -351,7 +351,7 @@ def update_big3(date,event_name,record):
         WHERE date_updated = \'{date}\'
         AND event_name = \'{event_name}\'
     """
-    with psycopg2.connect(conn_db()) as conn:
+    with psycopg.connect(conn_db()) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
         conn.commit()
@@ -366,7 +366,7 @@ def get_armsize():
         FROM arm_size
         ORDER BY right_arm DESC
     """
-    with psycopg2.connect(conn_db()) as conn:
+    with psycopg.connect(conn_db()) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
             data = cur.fetchone()
@@ -378,7 +378,7 @@ def insert_armsize(date,left,right):
         INSERT INTO arm_size (date_updated,left_arm,right_arm)
         VALUES (\'{date}\',\'{left}\',{right})
     """
-    with psycopg2.connect(conn_db()) as conn:
+    with psycopg.connect(conn_db()) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
         conn.commit()
@@ -390,14 +390,14 @@ def update_armsize(date,left,right):
             right_arm = {right}
         WHERE date_updated = \'{date}\'
     """
-    with psycopg2.connect(conn_db()) as conn:
+    with psycopg.connect(conn_db()) as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
         conn.commit()
 
 try:
     main()
-except psycopg2.OperationalError as e:
+except psycopg.OperationalError as e:
     window = sg.Window("Body Manager",[[sg.Text(f"サーバーに接続できません。\n{e}")]], location=location,finalize=True)
     while True:
         event,values = window.read()
